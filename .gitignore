@@ -1,0 +1,5 @@
+ipynb_checkpoints/
+venv/   path_to_signal = '/home/oleg/projects/backup/collector_ions_data/collector'
+__pycache__
+.ipynb_checkpoints/
+venv/
