@@ -52,9 +52,9 @@ app.layout = dbc.Container([
                         ),
     
             dcc.Graph(id='tube_graph', figure={})
-        ], width={'size': 12, 'offset': 0, 'order':1})
+        ], width={'size': 6, 'offset': 0, 'order':1})
     
-    ], justify='around', align='end'),
+    ], justify='around'),
 
 
     dbc.Row([
