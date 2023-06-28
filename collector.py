@@ -6,7 +6,7 @@ def signal_to_frame(path_to_folder):
     
     """ 
             The function takes as input a path to a folder containing files with data on certain elements. Data files contain information about time 
-        registration of all ions and the magnitude of the collector signal. A function reads the data and adds it to the resulting table after
+        registration of all ions and the magnitude of the collector signal. The function reads the data and adds it to the resulting table after
         some processing.
         
             A resulting table contains next columns:

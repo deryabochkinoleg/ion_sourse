@@ -5,7 +5,7 @@ def spectr_to_frame(path_to_folder):
     
     """
             The function takes as input a path to a folder containing files with data on certain ions. Data files contain information about time 
-        registration of ions and the magnitude of the analyzer signal. A function reads the data and adds it to the resulting table after some processing.
+        registration of ions and the magnitude of the analyzer signal. The function reads the data and adds it to the resulting table after some processing.
         
             A resulting table contains next columns:
                 1. time registration of ions
