@@ -6,6 +6,7 @@ from dash import Dash, dcc, html, Input, Output
 from to_frame import to_frame
 from collector import collector
 from number_of_ions import number_of_ions
+from time_to_energy import time_to_energy
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -16,6 +17,11 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 path_to_folder = '/home/oleg/projects/backup/ions_data'
 
 df_tube = to_frame(path_to_folder)
+
+# energy data -------------------------------------------------------------------------
+path_to_mass_file = '/home/oleg/projects/backup/Elements.csv'
+
+df_energy = time_to_energy(path_to_folder, path_to_mass_file)
 
 # # collector data ---------------------------------------------------------------
 
@@ -52,9 +58,25 @@ app.layout = dbc.Container([
                         ),
     
             dcc.Graph(id='tube_graph', figure={})
-        ], width={'size': 6, 'offset': 0, 'order':1})
+        ], width={'size': 6, 'offset': 0, 'order':1}),
+
+        dbc.Col([
+            html.H1("", style={'fontSize':15, 'text-align':'center'}),
+            # dcc.Dropdown(id='target_dpdn',
+            #              options=[{'label': tg, 'value': tg} for tg in sorted(df_tube.target.unique())],
+            #              multi=True
+            #             ),
     
-    ], justify='around'),
+            html.H1("", style={'fontSize':15, 'text-align':'center'}),
+            # dcc.Dropdown(id='ion_dpdn', 
+            #              options=[],
+            #              multi=True
+            #             ),
+    
+            dcc.Graph(id='energy_graph', figure={})
+        ], width={'size': 6, 'offset': 0, 'order':2})
+    
+    ], justify='around', align='end'),
 
 
     dbc.Row([
@@ -110,6 +132,23 @@ def update_grpah(selected_ions, selected_target):
         df_tube_copy = df_tube[(df_tube.target.isin(selected_target)) & (df_tube.ion.isin(selected_ions))]
 
         fig = px.line(df_tube_copy, x="time", y="n_ions", color="ion", markers=True)
+            
+        return fig
+    else:
+        return dash.no_update
+    
+@app.callback(
+    Output('energy_graph', 'figure'),
+    [Input('ion_dpdn', 'value'),
+     Input('target_dpdn', 'value')]
+)
+
+def update_grpah(selected_ions, selected_target):
+    if selected_target is not None and selected_ions is not None:
+        
+        df_energy_copy = df_energy[(df_energy.target.isin(selected_target)) & (df_energy.ion.isin(selected_ions))]
+
+        fig = px.line(df_energy_copy, x="energy", y="n_ions", color="ion", markers=True)
             
         return fig
     else:
