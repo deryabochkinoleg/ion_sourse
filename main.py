@@ -1,39 +1,41 @@
-import plotly.express as px
-import dash_bootstrap_components as dbc
-import pandas as pd
 import dash 
+import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output
+import plotly.express as px
+
 from to_frame import to_frame
 from collector import collector
 from number_of_ions import number_of_ions
 from time_to_energy import time_to_energy
 
+
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# Input and clean data ---------------------------------------------------------------
 
-# tube data----------------------------------------------------------------
+# input data -------------------------------------------------------------------------
 
-path_to_folder = '/home/oleg/projects/backup/ions_data'
+# mass_spectrum data------------------------------------------------------------------
 
-df_tube = to_frame(path_to_folder)
+path_to_ions_data = '/home/oleg/projects/backup/ions_data'
 
-# energy data -------------------------------------------------------------------------
-path_to_mass_file = '/home/oleg/projects/backup/Elements.csv'
+df_m_spectr = to_frame(path_to_ions_data)
 
-df_energy = time_to_energy(path_to_folder, path_to_mass_file)
+# energy data ------------------------------------------------------------------------
+path_to_element_mass_file = '/home/oleg/projects/backup/Elements.csv'
 
-# # collector data ---------------------------------------------------------------
+df_energy = time_to_energy(path_to_ions_data, path_to_element_mass_file)
+
+# collector data ---------------------------------------------------------------------
 
 path_to_signal = '/home/oleg/projects/backup/collector_ions_data/collector'
 
 df_collector = collector(path_to_signal)
 
-# # calculating number of ions -------------------------------------------------------------------------
+# calculating number of ions ---------------------------------------------------------
 
 df_number_of_ions = number_of_ions(path_to_signal)
 
-# # app layout bootstrap --------------------------------------------------------------------
+# app layout -------------------------------------------------------------------------
 
 app.layout = dbc.Container([
 
@@ -47,7 +49,7 @@ app.layout = dbc.Container([
         dbc.Col([
             html.H1("Target:", style={'fontSize':15, 'text-align':'center'}),
             dcc.Dropdown(id='target_dpdn',
-                         options=[{'label': tg, 'value': tg} for tg in sorted(df_tube.target.unique())],
+                         options=[{'label': tg, 'value': tg} for tg in sorted(df_m_spectr.target.unique())],
                          multi=True
                         ),
     
@@ -62,22 +64,13 @@ app.layout = dbc.Container([
 
         dbc.Col([
             html.H1("", style={'fontSize':15, 'text-align':'center'}),
-            # dcc.Dropdown(id='target_dpdn',
-            #              options=[{'label': tg, 'value': tg} for tg in sorted(df_tube.target.unique())],
-            #              multi=True
-            #             ),
-    
+
             html.H1("", style={'fontSize':15, 'text-align':'center'}),
-            # dcc.Dropdown(id='ion_dpdn', 
-            #              options=[],
-            #              multi=True
-            #             ),
-    
+
             dcc.Graph(id='energy_graph', figure={})
         ], width={'size': 6, 'offset': 0, 'order':2})
     
     ], justify='around', align='end'),
-
 
     dbc.Row([
             dbc.Col([
@@ -92,19 +85,17 @@ app.layout = dbc.Container([
 
             dbc.Col([
             html.H1("Number of ions", style={'fontSize':15, 'text-align':'center'}),
-            # dcc.Dropdown(id='pie_dpdn',
-            #              options=[{'label': elnt, 'value': elnt} for elnt in sorted(number_of_ions.element.unique())],
-            #              multi=False),
-            
+
             dcc.Graph(id='pie_graph', figure={})
         ], width={'size': 5, 'offset': 0, 'order':2})
     ], justify='around')
     
 ], fluid=True)
-# app callbacks -----------------------------------------------------
+
+# app callbacks --------------------------------------------------------------------
 
 
-# Populate the options of ions dropdown based on target dropdown
+# Populate the options of ions dropdown based on target dropdown -------------------
 @app.callback(
     Output('ion_dpdn', 'options'),
     [Input('target_dpdn', 'value')]
@@ -114,11 +105,10 @@ def set_ions_options(chosen_target):
     if chosen_target is None:
         return dash.no_update
     else:
-        df_tube_copy = df_tube.loc[df_tube['target'].isin(chosen_target)]
-        return [{'label': ion, 'value': ion} for ion in sorted(df_tube_copy.ion.unique())]
-# # populate initial values of ions dropdown
-
-# # create graph
+        df_m_spectr_copy = df_m_spectr.loc[df_m_spectr['target'].isin(chosen_target)]
+        return [{'label': ion, 'value': ion} for ion in sorted(df_m_spectr_copy.ion.unique())]
+    
+# create graph ----------------------------------------------------------------------
 
 @app.callback(
     Output('tube_graph', 'figure'),
@@ -129,9 +119,9 @@ def set_ions_options(chosen_target):
 def update_grpah(selected_ions, selected_target):
     if selected_target is not None and selected_ions is not None:
         
-        df_tube_copy = df_tube[(df_tube.target.isin(selected_target)) & (df_tube.ion.isin(selected_ions))]
+        df_m_spectr_copy = df_m_spectr[(df_m_spectr.target.isin(selected_target)) & (df_m_spectr.ion.isin(selected_ions))]
 
-        fig = px.line(df_tube_copy, x="time", y="n_ions", color="ion", markers=True)
+        fig = px.line(df_m_spectr_copy, x="time", y="n_ions", color="ion", markers=True)
             
         return fig
     else:
@@ -155,13 +145,12 @@ def update_grpah(selected_ions, selected_target):
         return dash.no_update
         
     
-# # create graph for collector results
+# create graph for collector results
 
 @app.callback(
     Output('graph_collector', 'figure'),
     Input('target_col_dpdn', 'value')
 )
-
 
 def update_grpah(selected_target):
     
@@ -190,7 +179,3 @@ def update_pie_grpah(selected_element):
 
 if __name__ == '__main__':
     app.run_server(debug=True, port=8090)
-
-
-
-    # host='0.0.0.0', port=8080
