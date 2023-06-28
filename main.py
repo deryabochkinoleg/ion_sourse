@@ -3,9 +3,9 @@ import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output
 import plotly.express as px
 
-from to_frame import to_frame
-from collector import collector
-from number_of_ions import number_of_ions
+from mass_spectr import spectr_to_frame
+from collector import signal_to_frame
+from ions_calculation import number_of_ions
 from time_to_energy import time_to_energy
 
 
@@ -18,7 +18,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 path_to_ions_data = '/home/oleg/projects/backup/ions_data'
 
-df_m_spectr = to_frame(path_to_ions_data)
+df_m_spectr = spectr_to_frame(path_to_ions_data)
 
 # energy data ------------------------------------------------------------------------
 path_to_element_mass_file = '/home/oleg/projects/backup/Elements.csv'
@@ -27,13 +27,14 @@ df_energy = time_to_energy(path_to_ions_data, path_to_element_mass_file)
 
 # collector data ---------------------------------------------------------------------
 
-path_to_signal = '/home/oleg/projects/backup/collector_ions_data/collector'
+path_to_collector_data = '/home/oleg/projects/backup/collector_ions_data/collector'
 
-df_collector = collector(path_to_signal)
+df_collector = signal_to_frame(path_to_collector_data)
 
 # calculating number of ions ---------------------------------------------------------
 
-df_number_of_ions = number_of_ions(path_to_signal)
+df_number_of_ions = number_of_ions(path_to_collector_data)
+
 
 # app layout -------------------------------------------------------------------------
 
@@ -81,7 +82,7 @@ app.layout = dbc.Container([
                         ),
             dcc.Graph(id='graph_collector', figure={})
 
-            ], width={'size': 5, 'offset': 0, 'order':1}),
+            ], width={'size': 6, 'offset': 0, 'order':1}),
 
             dbc.Col([
             html.H1("Number of ions", style={'fontSize':15, 'text-align':'center'}),
@@ -156,11 +157,7 @@ def update_grpah(selected_target):
     
     df_collector_copy = df_collector[df_collector.element == selected_target]
 
-    ind = df_collector_copy['signal'][(df_collector_copy['signal'] > 0)].index
-
-    right_edge = ind[ind > 100][0]
-
-    fig = px.line(abs(df_collector_copy[['signal', 'time']].loc[0:right_edge]), x="time", y="signal", markers=False)
+    fig = px.line(df_collector_copy, x="time", y="signal", markers=False)
         
     return fig
 

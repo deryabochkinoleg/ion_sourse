@@ -1,17 +1,13 @@
 def number_of_ions(path_to_signal):
     
-    from collector import collector
+    from collector import signal_to_frame
     import pandas as pd
 
-    df_collector = collector(path_to_signal)
-    indx = df_collector['signal'][(df_collector['signal'] > 0)].index
-    right_edge = indx[indx > 100][0]
+    df_collector = signal_to_frame(path_to_signal)
 
-    df_n = df_collector[0:right_edge]
     s = 0.0
-    for k in range(len(df_n) - 1):
-        s += (df_n['time'][k+1] - df_n['time'][k]) * (df_n['signal'][k+1] + df_n['signal'][k]) / 2
-    s = s * (-1)
+    for k in range(len(df_collector) - 1):
+        s += (df_collector['time'][k+1] - df_collector['time'][k]) * (df_collector['signal'][k+1] + df_collector['signal'][k]) / 2
 
     Ne = s/1.6e-19
 

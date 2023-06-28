@@ -38,14 +38,19 @@ def signal_to_frame(path_to_folder):
             # convert signal to current
             df_temp['signal'] = k * df_temp['signal'] / 5
 
+            df_temp['signal'] = df_temp['signal'].apply(abs)
+
             df_temp['element'] = adds.split('/')[-1]
 
             df_temp['time'] = df_temp.index * 0.000000025  
+
+            df_temp = df_temp.loc[df_temp['signal'] > 0.004]
 
             df_col = pd.concat([df_col, df_temp])  
             
     df_col = df_col.sort_values(['element', 'time'], ascending=[True, True])
     df_col = df_col.reset_index(drop=True)
+
 
     return df_col
             
