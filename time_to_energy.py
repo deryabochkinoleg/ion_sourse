@@ -51,7 +51,7 @@ def time_to_energy(path_to_folder, path_to_mass_file):
     df['element'] = df.ion.apply(lambda x: ''.join([i for i in x.split('+')[0] if not i.isdigit()]))
     
     # merge df with elements
-    full = f.merge(elements, how='inner', on='element')
+    full = df.merge(elements, how='inner', on='element')
     
     # add column with ion's velocity
     full['velocity'] = tube_length / (full['time'] / 1e6)
