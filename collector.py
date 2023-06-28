@@ -1,9 +1,18 @@
-def collector(path_to_folder):
+def signal_to_frame(path_to_folder):
 
     import os
     import pandas as pd
+
     
-    """ Функция получает данные с коллектора ионов и возвращает датафрейм с рабивкой по ионам
+    """ 
+            The function takes as input a path to a folder containing files with data on certain elements. Data files contain information about time 
+        registration of all ions and the magnitude of the collector signal. A function reads the data and adds it to the resulting table after
+        some processing.
+        
+            A resulting table contains next columns:
+                1. time - signal registration time
+                2. signal - magnitude of the collector signal
+                3. element - type of material ions of which are being exploring
     """
     
     # signal_to-current conversion factor 
