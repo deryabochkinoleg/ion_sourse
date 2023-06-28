@@ -1,10 +1,18 @@
-def to_frame(path_to_folder):
+def spectr_to_frame(path_to_folder):
     
     import pandas as pd
     import os
     
-    """Функция принимает на вход путь к папке, содержащей файлы с данными по определенным ионам в сыром виде, и
-    после обработки возвращает датафрейм с информацией по типу мишени, типу ионов, времени прихода ионов и их количество """
+    """
+            The function takes as input a path to a folder containing files with data on certain ions. Data files contain information about time 
+        registration of ions and the magnitude of the analyzer signal. A function reads the data and adds it to the resulting table after some processing.
+        
+            A resulting table contains next columns:
+                1. time registration of ions
+                2. magnitude of the analyzer signal
+                3. type of ion
+                4. target material
+    """
     
     # create an empty DataFrame
     df = pd.DataFrame()
