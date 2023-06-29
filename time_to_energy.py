@@ -4,8 +4,18 @@ def time_to_energy(path_to_folder, path_to_mass_file):
     import pandas as pd
     import os
     
-    """Функция принимает на вход путь к папке, содержащей данные по определенным ионам в сыром виде, и
-    после обработки возвращает датафрейм в разбивке ионов по разрядностям и суммарное значение ионов """
+    """
+            The function takes as input a path to a folder containing files with data on certain ions and a path to the file with ions masses of elements.
+            Data files contain information about time registration of ions and the magnitude of the analyzer signal.
+            The function reads the data and adds it to the resulting table after some processing.
+        
+            A resulting table contains next columns:
+                1. time registration of ions
+                2. magnitude of the analyzer signal
+                3. type of ion
+                4. target material
+                5. ions energy
+    """
     
     # parameters and constants
     m_proton = 1.67e-27
