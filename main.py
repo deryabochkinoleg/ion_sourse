@@ -122,7 +122,8 @@ def update_grpah(selected_ions, selected_target):
         
         df_m_spectr_copy = df_m_spectr[(df_m_spectr.target.isin(selected_target)) & (df_m_spectr.ion.isin(selected_ions))]
 
-        fig = px.line(df_m_spectr_copy, x="time", y="n_ions", color="ion", markers=True)
+        fig = px.line(df_m_spectr_copy, x="time", y="n_ions", color="ion", markers=True, 
+                      labels={"time": "time (mics)", "n_ions": "signal magnitude"}, title="Energy distribution")
             
         return fig
     else:
@@ -139,7 +140,8 @@ def update_grpah(selected_ions, selected_target):
         
         df_energy_copy = df_energy[(df_energy.target.isin(selected_target)) & (df_energy.ion.isin(selected_ions))]
 
-        fig = px.line(df_energy_copy, x="energy", y="n_ions", color="ion", markers=True)
+        fig = px.line(df_energy_copy, x="energy", y="n_ions", color="ion", markers=True,
+                       labels={"n_ions": "signal magnitude","energy": "energy (eV)"}, title="Time distribution")
             
         return fig
     else:
@@ -157,7 +159,8 @@ def update_grpah(selected_target):
     
     df_collector_copy = df_collector[df_collector.element == selected_target]
 
-    fig = px.line(df_collector_copy, x="time", y="signal", markers=False)
+    fig = px.line(df_collector_copy, x="time", y="signal", markers=False, 
+                  labels={"signal": "signal magnitude", "time": "time (mics)"}, title="Collector signal")
         
     return fig
 
